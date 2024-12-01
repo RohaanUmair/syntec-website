@@ -1,7 +1,7 @@
 "use client"
 
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+// import { getAnalytics } from "firebase/analytics";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
 import Swal from "sweetalert2";
@@ -21,7 +21,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// const analytics = getAnalytics(app);
 
 const db = getFirestore(app);
 
@@ -93,6 +93,5 @@ export {
   app,
   loginUser,
   addDataToDB,
-  getData,
-  analytics
+  getData
 }
