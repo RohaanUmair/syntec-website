@@ -8,15 +8,15 @@ function LoginForm() {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
 
-    function handleEmail(e: any) {
+    function handleEmail(e: React.ChangeEvent<HTMLInputElement>) {
         setEmail(e.target.value);
     }
 
-    function handlePassword(e: any) {
+    function handlePassword(e: React.ChangeEvent<HTMLInputElement>) {
         setPassword(e.target.value);
     }
 
-    function handleSubmit(e: any) {
+    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         loginUser(email, password);
     }

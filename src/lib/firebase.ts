@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
 import Swal from "sweetalert2";
 
@@ -31,10 +31,10 @@ function loginUser(email: string, password: string) {
   signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       const user = userCredential.user;
+      console.log(user);
       alert("logged in");
     })
     .catch((error) => {
-      const errorCode = error.code;
       const errorMessage = error.message;
       alert(errorMessage);
     });
@@ -46,28 +46,40 @@ async function addDataToDB(userId: string, userPayment: string, month: string) {
     const docRef = await addDoc(collection(db, "users"), {
       userId,
       userPayment,
-      month
+      month,
     });
+
+    console.log("Document written with ID: ", docRef.id);
 
     Swal.fire({
       position: "center",
       icon: "success",
       title: "Your Data has been saved",
       showConfirmButton: false,
-      timer: 1500
+      timer: 1500,
     });
-
-  } catch (e) {
-    console.error("Error adding document: ", e);
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      console.error("Error adding document: ", e.message);
+    } else {
+      console.error("An unknown error occurred: ", e);
+    }
   }
 }
 
+
+    interface Data {
+        userId: string
+        userPayment: string
+        month: string
+    }
+
 async function getData() {
-  const data: any = [];
+  const data: Data[] = [];
   const querySnapshot = await getDocs(collection(db, "users"));
 
   querySnapshot.forEach((doc) => {
-    data.push(doc.data());
+    data.push(doc.data() as Data);
   });
 
   return data;
@@ -79,5 +91,6 @@ export {
   app,
   loginUser,
   addDataToDB,
-  getData
+  getData,
+  analytics
 }

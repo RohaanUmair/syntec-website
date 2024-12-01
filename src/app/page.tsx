@@ -2,7 +2,7 @@
 import LoginForm from "@/components/ui/LoginForm";
 import React, { useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { addDataToDB, app, getData } from "@/lib/firebase";
+import { addDataToDB, app } from "@/lib/firebase";
 
 
 
@@ -19,7 +19,6 @@ const PaymentForm: React.FC = () => {
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        const uid = user.uid;
         setIsLoggedIn(true);
       } else {
         setIsLoggedIn(false);
@@ -33,15 +32,15 @@ const PaymentForm: React.FC = () => {
     setUserMonth(month);
   }
 
-  const handleInputId = (e: any) => {
+  const handleInputId = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserId(e.target.value);
   }
 
-  const handleInputPayment = (e: any) => {
+  const handleInputPayment = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserPayment(e.target.value);
   }
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     if (userMonth == "Months") {
       e.preventDefault();
       alert("Choose a month");

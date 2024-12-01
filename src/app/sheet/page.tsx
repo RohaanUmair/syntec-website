@@ -6,7 +6,13 @@ import Loading from "../loading";
 
 function Sheet() {
 
-    const [data, setData] = useState<any>([]);
+    interface Data {
+        userId: string
+        userPayment: string
+        month: string
+    }
+
+    const [data, setData] = useState<Data[]>([]);
 
     useEffect(() => {
         async function dataFetching() {
@@ -61,7 +67,7 @@ function Sheet() {
                     </tr>
                 </thead>
                 <tbody>
-                    {data.map((row: any, index: number) => (
+                    {data.map((row: Data, index: number) => (
                         <tr
                             key={index}
                             className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"
