@@ -14,6 +14,8 @@ const PaymentForm: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
+  const months = ['Months' ,'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
   useEffect(() => {
     const auth = getAuth(app);
 
@@ -113,7 +115,15 @@ const PaymentForm: React.FC = () => {
 
 
           <select required onChange={(e) => { handleUserMonth(e.target.value) }} className="border h-10 mb-6 flex items-center justify-center outline-none w-full px-3">
-            <option value='Months'>Months</option>
+            {
+              months.map((month) => {
+                return <option value={month}>{month}</option>
+              })
+            }
+
+
+
+            {/* <option value='Months'>Months</option>
             <option value='January'>January</option>
             <option value='Feburary'>Feburary</option>
             <option value='March'>March</option>
@@ -125,7 +135,7 @@ const PaymentForm: React.FC = () => {
             <option value='September'>September</option>
             <option value='October'>October</option>
             <option value='November'>November</option>
-            <option value='December'>December</option>
+            <option value='December'>December</option> */}
           </select>
 
 
