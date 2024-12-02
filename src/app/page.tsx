@@ -45,20 +45,19 @@ const PaymentForm: React.FC = () => {
       e.preventDefault();
       alert("Choose a month");
     } else {
-      e.preventDefault(); // Always prevent default behavior first.
+      e.preventDefault();
 
-      setIsSubmitting(true); // Set submitting state before asynchronous operations.
+      setIsSubmitting(true);
 
       try {
         addDataToDB(userId, userPayment, userMonth);
 
-        // Clear input fields after successful operation.
         setUserId("");
         setUserPayment("");
       } catch (error) {
         console.error("Error adding data to DB:", error);
       } finally {
-        setIsSubmitting(false); // Ensure the state resets regardless of success or failure.
+        setIsSubmitting(false);
       }
     }
 
