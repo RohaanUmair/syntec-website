@@ -3,6 +3,7 @@ import LoginForm from "@/components/ui/LoginForm";
 import React, { useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { addDataToDB, app } from "@/lib/firebase";
+import Swal from "sweetalert2";
 
 
 
@@ -46,6 +47,13 @@ const PaymentForm: React.FC = () => {
     if (userMonth == "Months") {
       e.preventDefault();
       alert("Choose a month");
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Your Data has been saved",
+        showConfirmButton: false,
+        timer: 1500,
+      });
     } else {
       e.preventDefault();
 

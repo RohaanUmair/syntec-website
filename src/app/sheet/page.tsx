@@ -1,6 +1,6 @@
 "use client"
 import { getData } from "@/lib/firebase";
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import Loading from "../loading";
 
 
@@ -23,6 +23,14 @@ function Sheet() {
         dataFetching();
 
     }, []);
+
+
+    const [total, setTotal] = useState<number>(0);
+
+    useEffect(() => {
+        const calculatedTotal = data.reduce((sum, row) => sum + parseFloat(row.userPayment || "0"), 0);
+        setTotal(calculatedTotal);
+    }, [data]);
 
     if (data.length == 0) return <Loading />
 
@@ -58,9 +66,11 @@ function Sheet() {
 
 
         <div className="overflow-x-auto">
+            <h1 className="text-4xl text-right pr-36">Total: {total}</h1>
             <table className="min-w-full border-collapse bg-white shadow-md rounded-md">
                 <thead>
                     <tr className="bg-blue-500 text-white">
+                        <th className="py-3 px-6 text-left font-semibold">#</th>
                         <th className="py-3 px-6 text-left font-semibold">User ID</th>
                         <th className="py-3 px-6 text-left font-semibold">Month</th>
                         <th className="py-3 px-6 text-left font-semibold">Payment</th>
@@ -73,6 +83,7 @@ function Sheet() {
                             className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"
                                 } hover:bg-blue-50 transition-colors`}
                         >
+                            <td className="py-3 px-6">{index + 1}</td>
                             <td className="py-3 px-6">{row.userId}</td>
                             <td className="py-3 px-6">{row.month}</td>
                             <td className="py-3 px-6">{row.userPayment}</td>
