@@ -124,8 +124,8 @@ const PaymentForm: React.FC = () => {
 
           <select required onChange={(e) => { handleUserMonth(e.target.value) }} className="border h-10 mb-6 flex items-center justify-center outline-none w-full px-3">
             {
-              months.map((month) => {
-                return <option value={month}>{month}</option>
+              months.map((month, index) => {
+                return <option key={index} value={month}>{month}</option>
               })
             }
 
