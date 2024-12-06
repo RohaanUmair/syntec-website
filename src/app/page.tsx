@@ -14,8 +14,9 @@ const PaymentForm: React.FC = () => {
   const [userMonth, setUserMonth] = useState<string>('Months');
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [advance, setAdvance] = useState<boolean>(false);
 
-  const months = ['Months' ,'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+  const months = ['Months', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
   useEffect(() => {
     const auth = getAuth(app);
@@ -60,10 +61,11 @@ const PaymentForm: React.FC = () => {
       setIsSubmitting(true);
 
       try {
-        addDataToDB(userId, userPayment, userMonth);
+        addDataToDB(userId, userPayment, userMonth, advance);
 
         setUserId("");
         setUserPayment("");
+        setAdvance(false);
       } catch (error) {
         console.error("Error adding data to DB:", error);
       } finally {
@@ -119,6 +121,19 @@ const PaymentForm: React.FC = () => {
               name="userPayment"
               value={userPayment}
             />
+
+            <div className="mb-6">
+              <label htmlFor="advance" className="block text-sm font-medium text-gray-700">
+                Advance Payment?
+              </label>
+              <input
+                type="checkbox"
+                id="advance"
+                checked={advance}
+                onChange={(e) => setAdvance(e.target.checked)}
+                className="mt-1 h-5 w-5"
+              />
+            </div>
           </div>
 
 

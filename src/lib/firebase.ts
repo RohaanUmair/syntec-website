@@ -43,12 +43,15 @@ function loginUser(email: string, password: string) {
 }
 
 
-async function addDataToDB(userId: string, userPayment: string, month: string) {
+async function addDataToDB(userId: string, userPayment: string, month: string, advance: boolean) {
+
   try {
     const docRef = await addDoc(collection(db, "users"), {
       userId,
       userPayment,
       month,
+      advance,
+      date: new Date().toISOString()
     });
 
     console.log("Document written with ID: ", docRef.id);
@@ -70,18 +73,26 @@ async function addDataToDB(userId: string, userPayment: string, month: string) {
 }
 
 
-    interface Data {
-        userId: string
-        userPayment: string
-        month: string
-    }
+interface Data {
+  userId: string
+  userPayment: string
+  month: string
+  date: string
+}
 
 async function getData() {
   const data: Data[] = [];
   const querySnapshot = await getDocs(collection(db, "users"));
 
   querySnapshot.forEach((doc) => {
-    data.push(doc.data() as Data);
+    const docData = doc.data();
+    data.push({
+      userId: docData.userId,
+      userPayment: docData.userPayment,
+      month: docData.month,
+      date: docData.date || "N/A",
+      advance: docData.advance ?? null,
+    } as Data);
   });
 
   return data;
