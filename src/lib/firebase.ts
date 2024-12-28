@@ -71,20 +71,23 @@ function loginUser(email: string, password: string) {
 //     }
 //   }
 // }
-async function addDataToDB(userId: string, userPayment: string, month: string, advance: boolean) {
+async function addDataToDB(
+  userId: string,
+  userPayment: string,
+  month: string,
+  advance: boolean,
+  slipNumber: string
+) {
   try {
-    // Reference the Firestore collection
     const usersRef = collection(db, "users");
 
-    // Fetch existing data for the given `userId` and `month`
     const querySnapshot = await getDocs(usersRef);
-    const userExists = querySnapshot.docs.some(doc => {
+    const userExists = querySnapshot.docs.some((doc) => {
       const data = doc.data();
       return data.userId === userId && data.month === month;
     });
 
     if (userExists) {
-      // Alert user if the same userId and month already exist
       Swal.fire({
         position: "center",
         icon: "error",
@@ -93,13 +96,13 @@ async function addDataToDB(userId: string, userPayment: string, month: string, a
         timer: 1500,
       });
     } else {
-      // Add new entry to Firestore
       const docRef = await addDoc(usersRef, {
         userId,
         userPayment,
         month,
         advance,
-        date: new Date().toISOString()
+        slipNumber,
+        date: new Date().toISOString(),
       });
 
       console.log("Document written with ID: ", docRef.id);
@@ -112,35 +115,39 @@ async function addDataToDB(userId: string, userPayment: string, month: string, a
         timer: 1500,
       });
     }
-  } catch (e: unknown) {
-    if (e instanceof Error) {
-      console.error("Error adding data to DB:", e.message);
-    }
+  } catch (e) {
+    console.error("Error adding data to DB:", e);
   }
 }
 
 
 
+
 interface Data {
-  userId: string
-  userPayment: string
-  month: string
-  date: string
+  id?: string; // Make id optional
+  userId: string;
+  userPayment: number;
+  month: string;
+  date: string;
+  advance?: boolean;
+  slipNumber?: string;
 }
 
 async function getData() {
-  const data: Data[] = [];
+  const data: (Data & { id: string })[] = [];
   const querySnapshot = await getDocs(collection(db, "users"));
 
   querySnapshot.forEach((doc) => {
     const docData = doc.data();
     data.push({
+      id: doc.id,
       userId: docData.userId,
       userPayment: docData.userPayment,
       month: docData.month,
       date: docData.date || "N/A",
       advance: docData.advance ?? null,
-    } as Data);
+      slipNumber: docData.slipNumber || "N/A",
+    });
   });
 
   return data;
@@ -148,9 +155,55 @@ async function getData() {
 
 
 
+
+
+
+
+import { deleteDoc, doc } from "firebase/firestore";
+
+async function deleteData(docId: string) {
+  const result = await Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!"
+  });
+
+  if (result.isConfirmed) {
+    try {
+      await deleteDoc(doc(db, "users", docId)); // Wait for document deletion
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Entry deleted successfully",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    } catch (e) {
+      console.error("Error deleting document:", e);
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "Failed to delete entry",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+  }
+}
+
+
+
+
+
+
 export {
   app,
   loginUser,
   addDataToDB,
-  getData
+  getData,
+  deleteData
 }

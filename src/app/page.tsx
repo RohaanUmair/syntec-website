@@ -45,36 +45,40 @@ const PaymentForm: React.FC = () => {
     setUserPayment(e.target.value);
   }
 
+  const [slipNumber, setSlipNumber] = useState<string>("");
+
+  const handleInputSlipNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSlipNumber(e.target.value);
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    if (userMonth == "Months") {
-      e.preventDefault();
-      alert("Choose a month");
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: "Your Data has been saved",
-        showConfirmButton: false,
-        timer: 1500,
-      });
-    } else {
-      e.preventDefault();
+    e.preventDefault();
 
-      setIsSubmitting(true);
-
-      try {
-        addDataToDB(userId, userPayment, userMonth, advance);
-
-        setUserId("");
-        setUserPayment("");
-        setAdvance(false);
-      } catch (error) {
-        console.error("Error adding data to DB:", error);
-      } finally {
-        setIsSubmitting(false);
-      }
+    if (!slipNumber) {
+      alert("Slip # is required");
+      return;
     }
 
-  }
+    if (userMonth === "Months") {
+      alert("Choose a month");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      addDataToDB(userId, userPayment, userMonth, advance, slipNumber);
+
+      setUserId("");
+      setUserPayment("");
+      setAdvance(false);
+      setSlipNumber("");
+    } catch (error) {
+      console.error("Error adding data to DB:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   {
     return isLoggedIn ? (
@@ -140,6 +144,23 @@ const PaymentForm: React.FC = () => {
                 className="mt-1 h-5 w-5"
               />
             </div>
+          </div>
+
+
+          <div className="mb-4">
+            <label htmlFor="slipNumber" className="block text-sm font-medium text-gray-700">
+              Slip #
+            </label>
+            <input
+              required
+              onChange={handleInputSlipNumber}
+              type="text"
+              id="slipNumber"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-700"
+              placeholder="Enter Slip # (e.g., 12345 or online)"
+              name="slipNumber"
+              value={slipNumber}
+            />
           </div>
 
 

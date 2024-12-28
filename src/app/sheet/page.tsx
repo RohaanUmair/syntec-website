@@ -104,7 +104,7 @@
 
 
 "use client"
-import { app, getData } from "@/lib/firebase";
+import { app, deleteData, getData } from "@/lib/firebase";
 import React, { useEffect, useState } from "react";
 import Loading from "../loading";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -113,11 +113,13 @@ import LoginForm from "@/components/ui/LoginForm";
 function Sheet() {
 
     interface Data {
-        userId: string
-        userPayment: string
-        month: string
-        date: string
-        advance?: boolean
+        id?: string; // Make id optional
+        userId: string;
+        userPayment: number;
+        month: string;
+        date: string;
+        advance?: boolean;
+        slipNumber?: string;
     }
 
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -150,7 +152,7 @@ function Sheet() {
     useEffect(() => {
         const filtered = selectedMonth === "All" ? data : data.filter(row => row.month === selectedMonth);
         setFilteredData(filtered);
-        const calculatedTotal = filtered.reduce((sum, row) => sum + parseFloat(row.userPayment || "0"), 0);
+        const calculatedTotal = filtered.reduce((sum, row) => sum + parseFloat(String(row.userPayment) || "0"), 0);
         setTotal(calculatedTotal);
     }, [data, selectedMonth]);
 
@@ -182,27 +184,47 @@ function Sheet() {
                         <th className="py-3 px-6 text-left font-semibold">User ID</th>
                         <th className="py-3 px-6 text-left font-semibold">Month</th>
                         <th className="py-3 px-6 text-left font-semibold">Payment</th>
+                        <th className="py-3 px-6 text-left font-semibold">Slip #</th>
                         <th className="py-3 px-6 text-left font-semibold">Date</th>
                         <th className="py-3 px-6 text-left font-semibold">Advance</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {filteredData.map((row: Data, index: number) => (
-                        <tr
-                            key={index}
-                            className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"} hover:bg-blue-50 transition-colors`}
-                        >
-                            <td className="py-3 px-6">{index + 1}</td>
-                            <td className="py-3 px-6">{row.userId}</td>
-                            <td className="py-3 px-6">{row.month}</td>
-                            <td className="py-3 px-6">{row.userPayment}</td>
-                            <td className="py-3 px-6">{new Date(row.date).toLocaleString()}</td>
-                            <td className="py-3 px-6">
-                                {row.advance ? "Yes" : row.advance === false ? "No" : "Not Specified"}
-                            </td>
-                        </tr>
-                    ))}
+                    {filteredData.map((row, index) => {
+                        const rowId = row.id ?? `row-${index}`; // Default ID if undefined
+                        return (
+                            <tr
+                                key={rowId}
+                                className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"} hover:bg-blue-50 transition-colors`}
+                            >
+                                <td className="py-3 px-6">{index + 1}</td>
+                                <td className="py-3 px-6">{row.userId}</td>
+                                <td className="py-3 px-6">{row.month}</td>
+                                <td className="py-3 px-6">{row.userPayment}</td>
+                                <td className="py-3 px-6">{row.slipNumber}</td>
+                                <td className="py-3 px-6">{new Date(row.date).toLocaleString()}</td>
+                                <td className="py-3 px-6">{row.advance ? "Yes" : row.advance === false ? "No" : "Not Specified"}</td>
+                                <td className="py-3 px-6">
+                                    <button
+                                        onClick={async () => {
+                                            if (row.id) {
+                                                await deleteData(row.id); // Delete only if ID exists
+                                                setData((prevData) => prevData.filter((item) => item.id !== row.id));
+                                            } else {
+                                                console.error("Cannot delete entry without an ID.");
+                                            }
+                                        }}
+                                        className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        );
+                    })}
                 </tbody>
+
+
             </table>
         </div>
     ) : (
