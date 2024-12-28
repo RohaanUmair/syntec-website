@@ -3,7 +3,6 @@ import LoginForm from "@/components/ui/LoginForm";
 import React, { useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { addDataToDB, app } from "@/lib/firebase";
-import Swal from "sweetalert2";
 import Link from "next/link";
 
 
