@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { addDataToDB, app } from "@/lib/firebase";
 import Swal from "sweetalert2";
+import Link from "next/link";
 
 
 
@@ -77,7 +78,12 @@ const PaymentForm: React.FC = () => {
 
   {
     return isLoggedIn ? (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="flex items-center justify-center min-h-screen bg-gray-100     relative">
+
+        <Link href={'/sheet'}>
+          <button className="absolute top-20 right-20 bg-orange-400 px-3 py-2 rounded-sm text-white">Go To Sheet</button>
+        </Link>
+
         <form
           autoComplete="off"
           className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg"
@@ -143,22 +149,6 @@ const PaymentForm: React.FC = () => {
                 return <option key={index} value={month}>{month}</option>
               })
             }
-
-
-
-            {/* <option value='Months'>Months</option>
-            <option value='January'>January</option>
-            <option value='Feburary'>Feburary</option>
-            <option value='March'>March</option>
-            <option value='April'>April</option>
-            <option value='May'>May</option>
-            <option value='June'>June</option>
-            <option value='July'>July</option>
-            <option value='August'>August</option>
-            <option value='September'>September</option>
-            <option value='October'>October</option>
-            <option value='November'>November</option>
-            <option value='December'>December</option> */}
           </select>
 
 
